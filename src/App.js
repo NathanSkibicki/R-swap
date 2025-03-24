@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { writeStringToFirestore, getAllStringsFromFirestore } from './firebase';
+import Switch from '@mui/material/Switch'
 
 function App() {
   const [inputString, setInputString] = useState('');
@@ -7,6 +8,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [strings, setStrings] = useState([]);
   const [isLoadingStrings, setIsLoadingStrings] = useState(false);
+  const [category, setCategory] = useState('Project')
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,14 +47,20 @@ function App() {
     }
   };
 
+  const handleChange = (event) =>{
+
+    category === 'Project' ? setCategory('Experience'): setCategory('Project')
+    console.log(category)
+  }
+
   return (
     <div className="App" style={{ padding: '20px', maxWidth: '500px', margin: '0 auto' }}>
-      <h1>Firestore Write Test</h1>
+      <h1>Enter Resume Point</h1>
       
       <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
         <div style={{ marginBottom: '10px' }}>
           <label htmlFor="string-input" style={{ display: 'block', marginBottom: '5px' }}>
-            Enter a string to write to Firestore:
+            Enter Resume Point:
           </label>
           <input
             id="string-input"
@@ -75,7 +84,7 @@ function App() {
             marginRight: '10px'
           }}
         >
-          {isLoading ? 'Writing...' : 'Write to Firestore'}
+          {isLoading ? 'Writing...' : 'Publish'}
         </button>
         
         <button 
@@ -90,7 +99,7 @@ function App() {
             cursor: isLoadingStrings ? 'not-allowed' : 'pointer'
           }}
         >
-          {isLoadingStrings ? 'Loading...' : 'Show All Strings'}
+          {isLoadingStrings ? 'Loading...' : 'Show All Resume Points'}
         </button>
       </form>
       
@@ -132,6 +141,11 @@ function App() {
           </div>
         </div>
       )}
+      <div>
+        <h1>{category}</h1>
+        <Switch category= {category} onChange={handleChange}/>
+      </div>
+       
     </div>
   );
 }
