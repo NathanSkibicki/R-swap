@@ -19,7 +19,7 @@ function App() {
     setStatus('Writing to Firestore...');
 
     try {
-      const docId = await writeStringToFirestore(inputString);
+      const docId = await writeStringToFirestore(inputString, category);
       setStatus(`Successfully wrote to Firestore! Document ID: ${docId}`);
       setInputString('');
     } catch (error) {
@@ -48,8 +48,7 @@ function App() {
   };
 
   const handleChange = (event) =>{
-
-    category === 'Project' ? setCategory('Experience'): setCategory('Project')
+    category === 'Project' ? setCategory('Experience') : setCategory('Project')
     console.log(category)
   }
 
@@ -133,7 +132,8 @@ function App() {
               }}>
                 <p style={{ margin: '0 0 5px 0' }}><strong>Text:</strong> {item.text}</p>
                 <p style={{ margin: '0', fontSize: '0.8em', color: '#757575' }}>
-                  <strong>ID:</strong> {item.id} | 
+                  <strong>Category:</strong> {item.category || 'N/A'} | 
+                  <strong> ID:</strong> {item.id} | 
                   <strong> Timestamp:</strong> {item.timestamp?.toDate?.().toLocaleString() || 'N/A'}
                 </p>
               </div>
@@ -143,7 +143,7 @@ function App() {
       )}
       <div>
         <h1>{category}</h1>
-        <Switch category= {category} onChange={handleChange}/>
+        <Switch category={category} onChange={handleChange}/>
       </div>
        
     </div>
