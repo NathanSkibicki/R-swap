@@ -2,6 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { writeStringToFirestore, getAllStringsFromFirestore, deleteMultipleFromFirestore } from './firebase';
 import Switch from '@mui/material/Switch'
 import { Grid2 } from '@mui/material';
+import {useNavigate} from 'react-router-dom'
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 
@@ -13,7 +14,9 @@ function App() {
   const [isLoadingStrings, setIsLoadingStrings] = useState(false);
   const [category, setCategory] = useState('Project')
   const [selectedStrings, setSelectedStrings] = useState([]);
+  let navigate = useNavigate()
   
+  {/* fetch + display all str */}
   useEffect(() => {
     const fetchStrings = async ()=>{
       setIsLoadingStrings(true)
@@ -32,6 +35,12 @@ function App() {
     fetchStrings()
   }, [])
 
+  {/* React Router */}
+  const routeChange = () =>{
+    let path = '/ai'
+    navigate(path)
+  }
+  {/* submit new resume pt */}
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputString.trim()) return;
@@ -53,11 +62,13 @@ function App() {
     }
   };
 
+   {/* Project/Exp toggle */}
   const handleChange = (event) =>{
     category === 'Project' ? setCategory('Experience') : setCategory('Project')
     console.log(category)
   }
 
+  {/*Select for Delete hook*/}
   const handleCheckboxChange = (stringId) => {
     setSelectedStrings(prev => 
       prev.includes(stringId) 
@@ -66,6 +77,7 @@ function App() {
     );
   }
 
+  {/*Delete button*/}
   const handleDeleteSelected = async () => {
     if (selectedStrings.length === 0) {
       setStatus('No strings selected for deletion');
@@ -78,11 +90,9 @@ function App() {
     try {
       await deleteMultipleFromFirestore(selectedStrings);
       
-      // Refresh the strings list
       const updatedStrings = await getAllStringsFromFirestore();
       setStrings(updatedStrings);
       
-      // Clear selected strings
       setSelectedStrings([]);
       
       setStatus(`Successfully deleted ${selectedStrings.length} string(s)`);
@@ -195,6 +205,9 @@ function App() {
             </div>
           </div>
         )}
+      </div>
+      <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+        <Button variant ="contained" color="primary" onClick={routeChange}>Generate Resume</Button>
       </div>
     </div>
   );
