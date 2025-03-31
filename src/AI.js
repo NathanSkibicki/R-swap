@@ -39,14 +39,11 @@ function AI() {
       
       const prompt = `
         I need help tailoring my resume for a job. Here is the job description:
-        
         ${jobDescription}
-        
         Here are my resume points:
-        
         ${formattedPoints}
-        
-        Based on the job description, please create a tailored resume that highlights my most relevant experience and skills. Format it professionally with sections for Experience, Projects, Skills, etc. as appropriate.
+        Based on the job description, please create a tailored resume that highlights my most relevant experience and skills. Put all the experience first followed by
+        2 project selections from the list.
       `;
       
       const completion = await client.chat.completions.create({
@@ -73,9 +70,74 @@ function AI() {
   };
 
   return(
-    <div>
-        <h1>awsfoih</h1>
-    </div>
+    <Box sx={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Enter Job Description
+      </Typography>
+      
+      <TextField
+        fullWidth
+        label="Job Description"
+        multiline
+        rows={6}
+        value={jobDescription}
+        onChange={(e) => setJobDescription(e.target.value)}
+        margin="normal"
+        variant="outlined"
+        placeholder="Paste the job description here..."
+      />
+      
+      {error && (
+        <Typography color="error" sx={{ mt: 2 }}>
+          {error}
+        </Typography>
+      )}
+      
+      <Box sx={{ mt: 3, display: "flex", gap: 2 }}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={handleGenerateResume}
+          disabled={isLoading || !jobDescription.trim()}
+        >
+          {isLoading ? <CircularProgress size={24} /> : "Generate Resume"}
+        </Button>
+        
+        <Button 
+          variant="outlined" 
+          onClick={handleGoBack}
+        >
+          Back to Resume Points
+        </Button>
+      </Box>
+      
+      {generatedResume && (
+        <Paper sx={{ mt: 4, p: 3 }}>
+          <Typography variant="h5" gutterBottom>
+            Generated Resume
+          </Typography>
+          <Box sx={{ whiteSpace: "pre-wrap" }}>
+            {generatedResume.split("\n").map((line, i) => (
+              <Typography key={i} paragraph={line.trim() !== ""} variant="body1">
+                {line}
+              </Typography>
+            ))}
+          </Box>
+          <Box sx={{ mt: 3 }}>
+            <Button 
+              variant="contained" 
+              color="secondary"
+              onClick={() => {
+                navigator.clipboard.writeText(generatedResume);
+                alert("Resume copied to clipboard!");
+              }}
+            >
+              Copy to Clipboard
+            </Button>
+          </Box>
+        </Paper>
+      )}
+    </Box>
   )
 }
 export default AI;
